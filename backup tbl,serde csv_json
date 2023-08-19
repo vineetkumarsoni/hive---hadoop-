@@ -1,0 +1,300 @@
+SLF4J: Class path contains multiple SLF4J bindings.
+SLF4J: Found binding in [jar:file:/usr/local/apache-hive-3.1.2-bin/lib/log4j-slf4j-impl-2.10.0.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: Found binding in [jar:file:/usr/local/hadoop-3.2.1/share/hadoop/common/lib/slf4j-log4j12-1.7.25.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J: Actual binding is of type [org.apache.logging.slf4j.Log4jLoggerFactory]
+Hive Session ID = 5f1d18fa-8192-41ee-b05b-bb29a506c08b
+
+Logging initialized using configuration in jar:file:/usr/local/apache-hive-3.1.2-bin/lib/hive-common-3.1.2.jar!/hive-log4j2.properties Async: true
+Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+Hive Session ID = aaecbe08-ad49-46ec-9029-53b4517ca81d
+hive> show databases;
+OK
+default
+Time taken: 4.121 seconds, Fetched: 1 row(s)
+hive> create database hive_db;
+OK
+Time taken: 0.564 seconds
+hive> use hive_db;
+OK
+Time taken: 0.077 seconds
+hive> create table sales_data_v2 ( p_type string, total_sales int ) row format delimited fields terminated by ',';
+OK
+Time taken: 1.744 seconds
+hive> load data local inpath 'file:///config/workspace/sales_data_raw.csv' into table sales_data_v2;
+Loading data to table hive_db.sales_data_v2
+OK
+Time taken: 3.545 seconds
+hive> select * from sales_data_v2;
+OK
+clothes NULL
+toys    NULL
+clocks  NULL
+Time taken: 4.323 seconds, Fetched: 3 row(s)
+hive> set hive.cli.print.header=true;
+hive>  select * from sales_data_v2;
+OK
+sales_data_v2.p_type    sales_data_v2.total_sales
+clothes NULL
+toys    NULL
+clocks  NULL
+Time taken: 0.657 seconds, Fetched: 3 row(s)
+hive> truncate table sales_data_v2;
+OK
+Time taken: 0.532 seconds
+hive> select * from sales_data_v2;
+OK
+sales_data_v2.p_type    sales_data_v2.total_sales
+Time taken: 0.46 seconds
+hive>  truncate table sales_data_v2;
+OK
+Time taken: 0.663 seconds
+hive> load data local inpath 'file:///config/workspace/sales_data_raw.csv' into table sales_data_v2;
+Loading data to table hive_db.sales_data_v2
+OK
+Time taken: 1.337 seconds
+hive> select * from sales_data_v2;
+OK
+sales_data_v2.p_type    sales_data_v2.total_sales
+clothes 1000
+toys    2000
+clocks  NULL
+Time taken: 0.524 seconds, Fetched: 3 row(s)
+hive> 
+
+hive> create table sales_data_v2_bkup as select * from sales_data_v2;
+Query ID = abc_20230819172330_c00db1f2-1f01-4805-b347-225a5bc0e9a0
+Total jobs = 3
+Launching Job 1 out of 3
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_1692445057882_0001, Tracking URL = http://be2fd0733334:8088/proxy/application_1692445057882_0001/
+Kill Command = /usr/local/hadoop/bin/mapred job  -kill job_1692445057882_0001
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 0
+2023-08-19 17:24:05,711 Stage-1 map = 0%,  reduce = 0%
+2023-08-19 17:24:28,445 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 3.89 sec
+MapReduce Total cumulative CPU time: 3 seconds 890 msec
+Ended Job = job_1692445057882_0001
+Stage-4 is selected by condition resolver.
+Stage-3 is filtered out by condition resolver.
+Stage-5 is filtered out by condition resolver.
+Moving data to directory hdfs://localhost/user/hive/warehouse/hive_db.db/.hive-staging_hive_2023-08-19_17-23-30_509_4317399503634392997-1/-ext-10002
+Moving data to directory hdfs://localhost/user/hive/warehouse/hive_db.db/sales_data_v2_bkup
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1   Cumulative CPU: 3.89 sec   HDFS Read: 4875 HDFS Write: 115 SUCCESS
+Total MapReduce CPU Time Spent: 3 seconds 890 msec
+OK
+sales_data_v2.p_type    sales_data_v2.total_sales
+Time taken: 62.123 seconds
+hive> 
+
+ive> select * from sales_data_v2_bkup;
+OK
+sales_data_v2_bkup.p_type       sales_data_v2_bkup.total_sales
+clothes 1000
+toys    2000
+clocks  NULL
+Time taken: 0.461 seconds, Fetched: 3 row(s)
+hive> 
+
+CSV SERDE"::"
+
+hive> create table location_tmp
+    > (
+    > name string,
+    > location string
+    > )
+    > row format delimited
+    > fields terminated by ','
+    > tblproperties ("skip.header.line.count"="1");
+OK
+Time taken: 0.233 seconds
+hive> load data local inpath 'file:///config/workspace/csv_file.csv' into table location_tmp;
+Loading data to table hive_db.location_tmp
+OK
+Time taken: 1.697 seconds
+hive> select * from location_tmp;
+OK
+location_tmp.name       location_tmp.location
+Amit    "Bangalore
+Shashank        "Gurgaon
+Time taken: 0.458 seconds, Fetched: 2 row(s)
+
+
+hive> create table csv_table
+    > (
+    > name string,
+    > location string
+    > )
+    > row format serde 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
+    > with serdeproperties (
+    > "separatorChar" = ",",
+    > "quoteChar" = "\"",
+    > "escapeChar" ="\\"
+    > )
+    > stored as textfile
+    > tblproperties ("skip.header.line.count" = "1");
+OK
+Time taken: 0.242 seconds
+hive> load data local inpath 'file:///config/workspace/csv_file.csv' into table csv_table;
+Loading data to table hive_db.csv_table
+OK
+Time taken: 1.201 seconds
+hive> select * from csv_table;
+OK
+csv_table.name  csv_table.location
+Amit    Bangalore,India"                                                                                                                        
+Shashank        Gurgaon,India
+Time taken: 0.343 seconds, Fetched: 2 row(s)
+hive> 
+
+for json
+
+
+
+hive> create table json_table_practice
+    >      (
+    >      name string,
+    >      id int,
+    >      skills array<string>
+    >      )
+    >      row format serde 'org.apache.hive.hcatalog.data.JsonSerDe'
+    >      stored as textfile;
+OK
+Time taken: 0.152 seconds
+
+hive> load data local inpath 'file:///config/workspace/json_file.csv' into table json_table_practice;
+Loading data to table hive_db.json_table_practice
+OK
+Time taken: 1.131 seconds
+
+hive> select * from json_table_practice;
+OK
+json_table_practice.name        json_table_practice.id  json_table_practice.skills
+Amit    1       ["Hadoop","Python"]
+sumit   2       ["Hadoop","Hive"]
+Shashank        3       ["Airflow","Python"]
+Time taken: 0.769 seconds, Fetched: 3 row(s)
+hive> 
+hive> select name,skills[0] as Skills from json_table_practice; 
+OK
+name    skills
+Amit    Hadoop
+sumit   Hadoop
+Shashank        Airflow
+Time taken: 2.681 seconds, Fetched: 3 row(s)
+hive> 
+
+PARQUET FILE
+
+
+SLF4J: Class path contains multiple SLF4J bindings.
+SLF4J: Found binding in [jar:file:/usr/local/apache-hive-3.1.2-bin/lib/log4j-slf4j-impl-2.10.0.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: Found binding in [jar:file:/usr/local/hadoop-3.2.1/share/hadoop/common/lib/slf4j-log4j12-1.7.25.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J: Actual binding is of type [org.apache.logging.slf4j.Log4jLoggerFactory]
+Hive Session ID = 993fe3c9-23b4-4572-a8e8-8a3ef6d31a66
+
+Logging initialized using configuration in jar:file:/usr/local/apache-hive-3.1.2-bin/lib/hive-common-3.1.2.jar!/hive-log4j2.properties Async: true
+Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+hive> show databases;
+OK
+default
+Time taken: 2.943 seconds, Fetched: 1 row(s)
+hive> create table sales_data_pq_final
+    > (
+    > product_type string,
+    > total_sales int
+    > )
+    > stored as parquet;
+OK
+Time taken: 1.652 seconds
+hive> drop table sales_data_pq_final;
+OK
+Time taken: 2.354 seconds
+hive> create database hive_db;
+OK
+Time taken: 0.184 seconds
+hive> use hive_db;
+OK
+Time taken: 0.071 seconds
+hive> create table sales_data_v2 ( p_type string, total_sales int ) row format delimited fields terminated by ',';
+OK
+Time taken: 0.24 seconds
+hive> load data local inpath 'file:///config/workspace/sales_data_raw.csv' into table sales_data_v2;
+Loading data to table hive_db.sales_data_v2
+OK
+Time taken: 2.183 seconds
+
+hive> select * from sales_data_v2;
+OK
+drom clothes    1000
+toys    2000
+clocks  NULL
+Time taken: 3.226 seconds, Fetched: 3 row(s)
+hive> drop table sales_data_v2;
+OK
+Time taken: 0.802 seconds
+hive> create table sales_data_v2 ( p_type string, total_sales int ) row format delimited fields terminated by ',';
+OK
+Time taken: 0.181 seconds
+hive> load data local inpath 'file:///config/workspace/sales_data_raw.csv' into table sales_data_v2;
+Loading data to table hive_db.sales_data_v2
+OK
+Time taken: 1.57 seconds
+hive> select * from sales_data_v2;
+OK
+clothes 1000
+toys    2000
+clocks  3000
+Time taken: 0.51 seconds, Fetched: 3 row(s)
+hive> create table sales_data_pq_final
+    > (
+    > product_type string,
+    > total_sales int
+    > )
+    > stored as parquet;
+OK
+Time taken: 0.256 seconds
+hive> from sales_data_v2 insert overwrite table sales_data_pq_final select *;
+Query ID = abc_20230819192908_28166d32-1349-43ef-b491-f7951b0b3e96
+Total jobs = 3
+Launching Job 1 out of 3
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1692452694842_0001, Tracking URL = http://165d78cac777:8088/proxy/application_1692452694842_0001/
+Kill Command = /usr/local/hadoop/bin/mapred job  -kill job_1692452694842_0001
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2023-08-19 19:29:37,461 Stage-1 map = 0%,  reduce = 0%
+2023-08-19 19:29:55,655 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 29.25 sec
+2023-08-19 19:30:08,367 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 32.76 sec
+MapReduce Total cumulative CPU time: 32 seconds 760 msec
+Ended Job = job_1692452694842_0001
+Stage-4 is selected by condition resolver.
+Stage-3 is filtered out by condition resolver.
+Stage-5 is filtered out by condition resolver.
+Moving data to directory hdfs://localhost/user/hive/warehouse/hive_db.db/sales_data_pq_final/.hive-staging_hive_2023-08-19_19-29-08_307_2440230466627782333-1/-ext-10000
+Loading data to table hive_db.sales_data_pq_final
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 32.76 sec   HDFS Read: 14856 HDFS Write: 767 SUCCESS
+Total MapReduce CPU Time Spent: 32 seconds 760 msec
+OK
+Time taken: 64.84 seconds
+hive> 
+
+hive> select * from sales_data_pq_final;
+OK
+clothes 1000
+toys    2000
+clocks  3000
+Time taken: 0.413 seconds, Fetched: 3 row(s)
+hive> 
+
+
+
+
+
