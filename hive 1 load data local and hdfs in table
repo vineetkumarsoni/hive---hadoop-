@@ -1,0 +1,160 @@
+SLF4J: Class path contains multiple SLF4J bindings.
+SLF4J: Found binding in [jar:file:/usr/local/apache-hive-3.1.2-bin/lib/log4j-slf4j-impl-2.10.0.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: Found binding in [jar:file:/usr/local/hadoop-3.2.1/share/hadoop/common/lib/slf4j-log4j12-1.7.25.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J: Actual binding is of type [org.apache.logging.slf4j.Log4jLoggerFactory]
+Hive Session ID = e55f4739-9ab4-4b53-ab02-1c6bd7e959d2
+
+Logging initialized using configuration in jar:file:/usr/local/apache-hive-3.1.2-bin/lib/hive-common-3.1.2.jar!/hive-log4j2.properties Async: true
+Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+Hive Session ID = f285ee83-8e45-427c-92c1-446e69b87a8f
+hive> show databases;
+OK
+default
+Time taken: 4.659 seconds, Fetched: 1 row(s)
+hive> create database hive_db;
+OK
+Time taken: 0.412 seconds
+hive> show databases;
+OK
+default
+hive_db
+Time taken: 0.065 seconds, Fetched: 2 row(s)
+hive> use hive_db;
+OK
+Time taken: 0.077 seconds
+hive> create table department_data
+    > (
+    > dept_id int,
+    > dept_name string,
+    > manager_id int,
+    > salary int)
+    > row format delimited
+    > fields terminated by ',';
+OK
+Time taken: 1.758 seconds
+hive> show tables;
+OK
+department_data
+Time taken: 0.101 seconds, Fetched: 1 row(s)
+hive> load data local inpath 'file:///config/workspace/depart_data.csv' into table department_data;
+Loading data to table hive_db.department_data
+OK
+Time taken: 4.091 seconds
+hive> select * from department_data;
+OK
+10      Administration  200     1700
+20      Marketing       201     1800
+30      Purchasing      114     1700
+40      Human Resources 203     2400
+50      Shipping        121     1500
+60      IT      103     1400
+70      Public Relations        204     2700
+80      Sales   145     2500
+90      Executive       100     1700
+100     Finance 108     1700
+110     Accounting      205     1700
+120     Treasury        NULL    1700
+130     Corporate Tax   NULL    1700
+140     Control And Credit      NULL    1700
+150     Shareholder Services    NULL    1700
+160     Benefits        NULL    1700
+170     Manufacturing   NULL    1700
+180     Construction    NULL    1700
+190     Contracting     NULL    1700
+200     Operations      NULL    1700
+210     IT Support      NULL    1700
+220     NOC     NULL    1700
+230     IT Helpdesk     NULL    1700
+240     Government Sales        NULL    1700
+250     Retail Sales    NULL    1700
+260     Recruiting      NULL    1700
+270     Payroll NULL    1700
+Time taken: 4.199 seconds, Fetched: 27 row(s)
+hive> set hive.cli.print.header = true;
+hive> select * from department_data;
+OK
+department_data.dept_id department_data.dept_name       department_data.manager_id      department_data.salary
+10      Administration  200     1700
+20      Marketing       201     1800
+30      Purchasing      114     1700
+40      Human Resources 203     2400
+50      Shipping        121     1500
+60      IT      103     1400
+70      Public Relations        204     2700
+80      Sales   145     2500
+90      Executive       100     1700
+100     Finance 108     1700
+110     Accounting      205     1700
+120     Treasury        NULL    1700
+130     Corporate Tax   NULL    1700
+140     Control And Credit      NULL    1700
+150     Shareholder Services    NULL    1700
+160     Benefits        NULL    1700
+170     Manufacturing   NULL    1700
+180     Construction    NULL    1700
+190     Contracting     NULL    1700
+200     Operations      NULL    1700
+210     IT Support      NULL    1700
+220     NOC     NULL    1700
+230     IT Helpdesk     NULL    1700
+240     Government Sales        NULL    1700
+250     Retail Sales    NULL    1700
+260     Recruiting      NULL    1700
+270     Payroll NULL    1700
+Time taken: 0.66 seconds, Fetched: 27 row(s)
+hive> drop table department_data;
+OK
+Time taken: 1.73 seconds
+hive> show tables;
+OK
+tab_name
+Time taken: 0.081 seconds
+
+hive> create table department_data
+    > (
+    > dept_id int,
+    > dept_name string,
+    > manager_id int,
+    > salary int)
+    > row format delimited
+    > fields terminated by ',';
+OK
+Time taken: 0.269 seconds
+hive> load data inpath '/tmp/depart_data.csv' into table department_data;
+Loading data to table hive_db.department_data
+OK
+Time taken: 0.906 seconds
+hive> set hive.cli.print.header = true;
+hive> select * from department_data;
+OK
+department_data.dept_id department_data.dept_name       department_data.manager_id      department_data.salary
+10      Administration  200     1700
+20      Marketing       201     1800
+30      Purchasing      114     1700
+40      Human Resources 203     2400
+50      Shipping        121     1500
+60      IT      103     1400
+70      Public Relations        204     2700
+80      Sales   145     2500
+90      Executive       100     1700
+100     Finance 108     1700
+110     Accounting      205     1700
+120     Treasury        NULL    1700
+130     Corporate Tax   NULL    1700
+140     Control And Credit      NULL    1700
+150     Shareholder Services    NULL    1700
+160     Benefits        NULL    1700
+170     Manufacturing   NULL    1700
+180     Construction    NULL    1700
+190     Contracting     NULL    1700
+200     Operations      NULL    1700
+210     IT Support      NULL    1700
+220     NOC     NULL    1700
+230     IT Helpdesk     NULL    1700
+240     Government Sales        NULL    1700
+250     Retail Sales    NULL    1700
+260     Recruiting      NULL    1700
+270     Payroll NULL    1700
+Time taken: 0.594 seconds, Fetched: 27 row(s)
+hive> 
