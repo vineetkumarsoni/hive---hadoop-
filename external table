@@ -1,0 +1,93 @@
+abc@3b2bc09c5cd6:~/workspace$ hadoop fs -mkdir /input_data/
+abc@3b2bc09c5cd6:~/workspace$ hadoop fs -put depart_data.csv /input_data
+2023-08-19 11:11:50,472 INFO sasl.SaslDataTransferClient: SASL encryption trust check: localHostTrusted = false, remoteHostTrusted = false
+abc@3b2bc09c5cd6:~/workspace$ hadsoop fs -ls /input_data
+bash: hadsoop: command not found
+abc@3b2bc09c5cd6:~/workspace$ hadoop fs -ls /input_data 
+Found 1 items
+-rw-r--r--   1 abc supergroup        655 2023-08-19 11:11 /input_data/depart_data.csv
+abc@3b2bc09c5cd6:~/workspace$ 
+
+
+
+
+
+hive side
+create external table department_date_external ( dept_id int, dept_name string, manager_id int, salary int ) row format delimited fields terminated by ',' location '/input_data/';
+OK
+Time taken: 0.25 seconds
+hive> show tables;
+OK
+tab_name
+department_data
+department_date_external
+Time taken: 0.052 seconds, Fetched: 2 row(s)
+hive> select * from department_date_external;
+OK
+department_date_external.dept_id        department_date_external.dept_name      department_date_external.manager_id       department_date_external.salary
+10      Administration  200     1700
+20      Marketing       201     1800
+30      Purchasing      114     1700
+40      Human Resources 203     2400
+50      Shipping        121     1500
+60      IT      103     1400
+70      Public Relations        204     2700
+80      Sales   145     2500
+90      Executive       100     1700
+100     Finance 108     1700
+110     Accounting      205     1700
+120     Treasury        NULL    1700
+130     Corporate Tax   NULL    1700
+140     Control And Credit      NULL    1700
+150     Shareholder Services    NULL    1700
+160     Benefits        NULL    1700
+170     Manufacturing   NULL    1700
+180     Construction    NULL    1700
+190     Contracting     NULL    1700
+200     Operations      NULL    1700
+210     IT Support      NULL    1700
+220     NOC     NULL    1700
+230     IT Helpdesk     NULL    1700
+240     Government Sales        NULL    1700
+250     Retail Sales    NULL    1700
+260     Recruiting      NULL    1700
+270     Payroll NULL    1700
+Time taken: 0.576 seconds, Fetched: 27 row(s)
+hive> describe formatted department_date_external;
+OK
+col_name        data_type       comment
+# col_name              data_type               comment             
+dept_id                 int                                         
+dept_name               string                                      
+manager_id              int                                         
+salary                  int                                         
+                 
+# Detailed Table Information             
+Database:               hive_db                  
+OwnerType:              USER                     
+Owner:                  abc                      
+CreateTime:             Sat Aug 19 11:15:41 IST 2023     
+LastAccessTime:         UNKNOWN                  
+Retention:              0                        
+Location:               hdfs://localhost/input_data      
+Table Type:             EXTERNAL_TABLE           
+Table Parameters:                
+        EXTERNAL                TRUE                
+        bucketing_version       2                   
+        numFiles                1                   
+        totalSize               655                 
+        transient_lastDdlTime   1692423941          
+                 
+# Storage Information            
+SerDe Library:          org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe       
+InputFormat:            org.apache.hadoop.mapred.TextInputFormat         
+OutputFormat:           org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat       
+Compressed:             No                       
+Num Buckets:            -1                       
+Bucket Columns:         []                       
+Sort Columns:           []                       
+Storage Desc Params:             
+        field.delim             ,                   
+        serialization.format    ,                   
+Time taken: 0.323 seconds, Fetched: 33 row(s)
+hive> 
